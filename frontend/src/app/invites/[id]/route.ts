@@ -2,7 +2,6 @@ import { fetchCurrentAccount } from "@/entities/account";
 import {
   HTTP_STATUS,
   loginUrl,
-  Sentry,
   storeHomeUrl,
   storeInvitationsUrl,
   storeListUrl,
@@ -44,9 +43,7 @@ export async function GET(
       { message: result.errorMessage },
       { status: result.status },
     );
-  } catch (error) {
-    Sentry.captureException(error);
-
+  } catch {
     return NextResponse.json(
       { message: HTTP_STATUS.INTERNAL_SERVER_ERROR.message },
       { status: HTTP_STATUS.INTERNAL_SERVER_ERROR.code },

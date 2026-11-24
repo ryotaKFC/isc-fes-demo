@@ -6,7 +6,6 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
 import { fetchCartQueryOptions } from "@/entities/cart";
 import { MenuOrderForm } from "./menu-order-form";
-import { MenuViewAnalytics } from "./menu-view-analytics";
 import { storeDetailQueryOptions } from "@/entities/store";
 import { cn } from "@/shared/lib/utils";
 
@@ -36,11 +35,6 @@ export async function GuestMenuDetailView({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <MenuViewAnalytics
-        storeId={storeId}
-        menuId={menuId}
-        unitPrice={menu.unitPrice}
-      />
       <div className="px-6 py-8 pb-32">
         <div
           className={cn(

@@ -1,6 +1,4 @@
 import createOpenApiClient from "openapi-fetch";
-import type { Middleware } from "openapi-fetch";
-import * as Sentry from "@sentry/nextjs";
 import type { paths } from "../schema";
 import {
   getApiBaseUrl,
@@ -18,12 +16,10 @@ export async function createApiClient() {
  * @returns
  */
 function createClient() {
-  const client = createOpenApiClient<paths>({
+  return createOpenApiClient<paths>({
     baseUrl: getApiBaseUrl(),
     credentials: "include",
   });
-  client.use(apiErrorReportingMiddleware);
-  return client;
 }
 
 /**
@@ -45,46 +41,9 @@ async function createServerClient() {
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join("; ");
 
-  const client = createOpenApiClient<paths>({
+  return createOpenApiClient<paths>({
     baseUrl: getApiBaseUrl(),
     credentials: "include",
     headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
   });
-  client.use(apiErrorReportingMiddleware);
-  return client;
 }
-
-const apiErrorReportingMiddleware: Middleware = {
-  onResponse({ request, response, schemaPath }) {
-    if (response.status < 500) return;
-
-    Sentry.withScope((scope) => {
-      scope.setTag("api.method", request.method);
-      scope.setTag("api.route", schemaPath);
-      scope.setTag("http.status_code", response.status);
-      scope.setFingerprint([
-        "api-response",
-        request.method,
-        schemaPath,
-        String(response.status),
-      ]);
-      Sentry.captureException(
-        new Error(
-          `API ${request.method} ${schemaPath} responded with ${response.status}`,
-        ),
-      );
-    });
-  },
-  onError({ error, request, schemaPath }) {
-    Sentry.withScope((scope) => {
-      scope.setTag("api.method", request.method);
-      scope.setTag("api.route", schemaPath);
-      scope.setFingerprint(["api-network", request.method, schemaPath]);
-      Sentry.captureException(
-        error instanceof Error
-          ? error
-          : new Error(`API ${request.method} ${schemaPath} request failed`),
-      );
-    });
-  },
-};

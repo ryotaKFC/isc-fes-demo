@@ -4,7 +4,6 @@ import {
   getApiBaseUrl,
   orderDetailKeys,
   ordersKey,
-  Sentry,
   websocketOrdersUrl,
 } from "@/shared/config";
 import { v } from "@/shared/lib/valibot";
@@ -59,12 +58,8 @@ export function useOrderEvents(enabled: boolean) {
           updateOrderList(queryClient, notification.data.orders),
         ]);
       }
-    } catch (error) {
-      Sentry.captureException(error, {
-        tags: {
-          source: "order-websocket",
-        },
-      });
+    } catch {
+      // 受信処理が失敗しても、後続の通知を処理できるよう接続を維持する。
     }
   }
 

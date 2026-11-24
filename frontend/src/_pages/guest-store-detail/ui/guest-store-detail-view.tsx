@@ -12,7 +12,6 @@ import { createQueryClient } from "@/shared/api";
 import { storeMenusQueryOptions } from "@/entities/menu";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { AllergenBadge } from "@/entities/allergen";
-import { StoreViewAnalytics } from "./store-view-analytics";
 import { CartOperationProvider } from "../model/cart-operation-context";
 import { fetchCartQueryOptions } from "@/entities/cart";
 import { StoreDetailCartLayout } from "./store-detail-cart-layout";
@@ -36,10 +35,6 @@ export async function GuestStoreDetailView({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <CartOperationProvider storeId={storeId}>
-        <StoreViewAnalytics
-          storeId={storeId}
-          floorNumber={Number(store.room.charAt(0)) || undefined}
-        />
         <StoreDetailCartLayout>
           <div className="min-w-0 lg:mx-auto lg:max-w-200">
             <div className="lg:flex lg:flex-row lg:items-start lg:gap-1.5 lg:px-6 lg:pt-10 lg:pb-8">

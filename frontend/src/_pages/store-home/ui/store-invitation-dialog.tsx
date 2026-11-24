@@ -23,7 +23,6 @@ import { useMutation } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { createStoreInvitationUrl } from "../api/create-store-invitation-url";
-import { trackEvent } from "@/shared/lib/analytics";
 
 const COPY_FEEDBACK_DURATION_MS = 2 * 1000; // 2秒
 
@@ -64,8 +63,6 @@ type StoreInvitationDialogProps = {
 export function StoreInvitationDialog({ storeId }: StoreInvitationDialogProps) {
   const mutation = useMutation({
     mutationFn: createStoreInvitationUrl,
-    onSuccess: () =>
-      trackEvent("store_invitation_created", { store_id: storeId }),
   });
 
   const [selectedUsageCount, setSelectedUsageCount] = useState<number | null>(
@@ -98,7 +95,6 @@ export function StoreInvitationDialog({ storeId }: StoreInvitationDialogProps) {
         : mutation.data;
 
       await navigator.clipboard.writeText(url);
-      trackEvent("store_invitation_copied", { store_id: storeId });
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), COPY_FEEDBACK_DURATION_MS);
     } catch {
