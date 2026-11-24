@@ -8,7 +8,6 @@ import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
-import { trackEvent } from "@/shared/lib/analytics";
 import { storeDetailQueryOptions } from "@/entities/store";
 import Image from "next/image";
 import { SoldOutLabel } from "@/shared/ui";
@@ -44,20 +43,7 @@ export function ToppingSelector({
       <ToggleGroup
         multiple
         disabled={!canMobileOrder}
-        onValueChange={(nextIds) => {
-          const changedId =
-            nextIds.find((id) => !value.includes(id)) ??
-            value.find((id) => !nextIds.includes(id));
-          if (changedId) {
-            trackEvent("topping_selection_changed", {
-              store_id: storeId,
-              menu_id: menuId,
-              topping_id: changedId,
-              selected: nextIds.includes(changedId),
-            });
-          }
-          onValueChange(nextIds);
-        }}
+        onValueChange={onValueChange}
         orientation="vertical"
         className="flex w-full flex-col gap-4"
         value={value}

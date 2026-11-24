@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { QueryProvider } from "./query-provider";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { AnalyticsPageView } from "./analytics-page-view";
 import { AppQuestionnaireProvider } from "@/widgets/app-questionnaire";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/shared/ui/toast";
@@ -40,10 +39,7 @@ export default function RootLayout({
         <AppQuestionnaireProvider>
           <body className="flex min-h-full flex-col">
             <Toaster>
-              <NuqsAdapter>
-                <AnalyticsPageView />
-                {children}
-              </NuqsAdapter>
+              <NuqsAdapter>{children}</NuqsAdapter>
             </Toaster>
           </body>
         </AppQuestionnaireProvider>

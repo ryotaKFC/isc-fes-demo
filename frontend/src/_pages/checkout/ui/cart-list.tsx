@@ -25,7 +25,6 @@ import { toast } from "@/shared/ui/toast";
 import { LinkButton } from "@/shared/ui/link-button";
 import { Dialog, DialogTrigger } from "@/shared/ui/dialog";
 import { startTransition, useEffect, useRef, useState } from "react";
-import { trackEvent } from "@/shared/lib/analytics";
 import { OrderConfirmDialog } from "./order-confirm-dialog";
 import {
   hasConfirmedOrderNotice,
@@ -52,7 +51,6 @@ export function CartList({ storeId }: CartListProps) {
     if (cart.items.length === 0 || trackedStoreId.current === cart.storeId)
       return;
     trackedStoreId.current = cart.storeId;
-    trackEvent("checkout_started");
   }, [cart]);
 
   const router = useRouter();

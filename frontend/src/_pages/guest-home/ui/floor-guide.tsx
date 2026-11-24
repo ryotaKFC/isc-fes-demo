@@ -17,7 +17,6 @@ import { PreviewImage } from "@/shared/ui/preview-image";
 import { FLOOR_GUIDE_ID, STORE_IMAGE_ASPECT } from "@/shared/config";
 import { ChevronRightIcon } from "lucide-react";
 import { guestStoreDetailUrl } from "@/shared/config";
-import { trackEvent } from "@/shared/lib/analytics";
 import { useQueryState } from "nuqs";
 import { floorParser } from "../model/floor-search-params";
 import { StoreCongestionBadge } from "@/entities/store";
@@ -81,7 +80,6 @@ export function FloorGuide() {
                 style={{ zIndex: floor.level }}
                 onClick={() => {
                   void setSelectedFloor(floor.level);
-                  trackEvent("select_floor", { floor_number: floor.level });
                 }}
               >
                 <Image
@@ -122,12 +120,6 @@ function FloorStoreList({ floor }: FloorStoreListProps) {
           <AppLink
             disabled={!!store.closedAt}
             href={guestStoreDetailUrl(store.id)}
-            onClick={() =>
-              trackEvent("select_store", {
-                store_id: store.id,
-                floor_number: floor,
-              })
-            }
           >
             <div className="border-foreground flex w-full flex-row items-center gap-2 border-b border-dashed px-2 py-4">
               <PreviewImage

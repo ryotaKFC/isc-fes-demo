@@ -15,7 +15,6 @@ import { AspectRatioImage } from "@/shared/ui/aspect-ratio-image";
 import { STORE_IMAGE_ASPECT, storeApplicationsKey } from "@/shared/config";
 import { ActionButton } from "@/shared/ui/action-button";
 import { updateStoreApplicationReviewStatus } from "../api/updateStoreApplicationReviewStatus";
-import { trackEvent } from "@/shared/lib/analytics";
 
 export function StoreReview() {
   const { data: stores } = useSuspenseQuery(storeApplicationQueryOptions());
@@ -23,11 +22,7 @@ export function StoreReview() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: updateStoreApplicationReviewStatus,
-    onSuccess: async (_result, variables) => {
-      trackEvent("store_application_reviewed", {
-        store_id: variables.storeId,
-        decision: variables.status,
-      });
+    onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: storeApplicationsKey(),
       });
