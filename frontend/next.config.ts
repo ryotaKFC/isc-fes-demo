@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
-import { parseAppMode } from "./src/shared/config/constants/env";
+import { isDemoMode } from "./src/shared/config/constants/env";
 
-parseAppMode(process.env.NEXT_PUBLIC_APP_MODE);
+if (!isDemoMode()) {
+  throw new Error(
+    `NEXT_PUBLIC_APP_MODEの値 "${process.env.NEXT_PUBLIC_APP_MODE}" は未対応です`,
+  );
+}
 
 const isDev = process.env.NODE_ENV !== "production";
 const nextConfig: NextConfig = {
