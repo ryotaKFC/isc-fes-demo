@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import { parseAppMode } from "./src/shared/config/constants/env";
+
+parseAppMode(process.env.NEXT_PUBLIC_APP_MODE);
 
 const isDev = process.env.NODE_ENV !== "production";
 const nextConfig: NextConfig = {
