@@ -2,7 +2,7 @@ export {
   ACCOUNT_SESSION_COOKIE_NAME,
   GUEST_SESSION_COOKIE_NAME,
 } from "./constants/cookies";
-export { getApiBaseUrl } from "./constants/env";
+export { getApiBaseUrl, isDemoMode } from "./constants/env";
 
 export {
   MenuEditorTarget,
