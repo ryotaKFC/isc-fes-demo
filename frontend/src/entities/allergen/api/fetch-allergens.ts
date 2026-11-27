@@ -1,10 +1,14 @@
-import { createApiClient } from "@/shared/api";
-import { allergensKey, getStatusMessage } from "@/shared/config";
+import { createApiClient, demoAllergens } from "@/shared/api";
+import { allergensKey, getStatusMessage, isDemoMode } from "@/shared/config";
 import { v } from "@/shared/lib/valibot";
 import { Allergen } from "../model/types";
 import { queryOptions } from "@tanstack/react-query";
 
 async function fetchAllergens() {
+  if (isDemoMode()) {
+    return v.parse(v.array(Allergen), demoAllergens);
+  }
+
   const client = await createApiClient();
   const { data, error, response } = await client.GET("/allergens");
 

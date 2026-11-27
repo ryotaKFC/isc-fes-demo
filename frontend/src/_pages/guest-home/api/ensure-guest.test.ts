@@ -7,6 +7,7 @@ vi.mock("@/shared/api", () => ({ createApiClient: vi.fn() }));
 const post = vi.fn();
 
 beforeEach(() => {
+  vi.stubEnv("NEXT_PUBLIC_APP_MODE", "api-test");
   vi.clearAllMocks();
   vi.mocked(createApiClient).mockResolvedValue({
     POST: post,

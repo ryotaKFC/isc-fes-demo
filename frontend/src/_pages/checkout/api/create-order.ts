@@ -1,6 +1,6 @@
 import { Order } from "@/entities/order";
-import { components, createApiClient } from "@/shared/api";
-import { getStatusMessage, isClientError } from "@/shared/config";
+import { components, createApiClient, getDemoOrders } from "@/shared/api";
+import { getStatusMessage, isClientError, isDemoMode } from "@/shared/config";
 import { v } from "@/shared/lib/valibot";
 
 type CreateOrderInput = components["schemas"]["CreateOrderInput"];
@@ -9,6 +9,15 @@ export async function createOrder({
   storeId,
   expectedCartVersion,
 }: CreateOrderInput): Promise<Order> {
+  if (isDemoMode()) {
+    const order = getDemoOrders({ storeId })[0];
+    if (order === undefined) {
+      throw new Error(`デモ用の注文が見つかりません: ${storeId}`);
+    }
+
+    return v.parse(Order, order);
+  }
+
   const client = await createApiClient();
   const { data, error, response } = await client.POST("/orders", {
     body: {

@@ -1,6 +1,10 @@
 import { Order } from "@/entities/order";
-import { components, createApiClient } from "@/shared/api";
-import { getStatusMessage, HTTP_STATUS } from "@/shared/config";
+import {
+  buildDemoUpdatedOrder,
+  components,
+  createApiClient,
+} from "@/shared/api";
+import { getStatusMessage, HTTP_STATUS, isDemoMode } from "@/shared/config";
 import { v } from "@/shared/lib/valibot";
 
 type UpdateOrderParams = {
@@ -14,6 +18,10 @@ export async function updateOrder({
   storeId,
   input,
 }: UpdateOrderParams) {
+  if (isDemoMode()) {
+    return v.parse(Order, buildDemoUpdatedOrder(storeId, orderId, input));
+  }
+
   const client = await createApiClient();
 
   const { data, error, response } = await client.PATCH(

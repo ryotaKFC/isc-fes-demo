@@ -4,8 +4,8 @@ import {
   ToppingSoldOut,
   ToppingUnitPrice,
 } from "@/entities/topping";
-import { createApiClient } from "@/shared/api";
-import { getStatusMessage } from "@/shared/config";
+import { buildDemoEditedTopping, createApiClient } from "@/shared/api";
+import { getStatusMessage, isDemoMode } from "@/shared/config";
 import { v } from "@/shared/lib/valibot";
 
 const EditToppingInput = v.object({
@@ -26,6 +26,13 @@ export async function editTopping({
   storeId,
   toppingId,
 }: EditToppingParams) {
+  if (isDemoMode()) {
+    return v.parse(
+      Topping,
+      buildDemoEditedTopping(storeId, toppingId, editToppingInput),
+    );
+  }
+
   const apiClient = await createApiClient();
   const { data, error, response } = await apiClient.PATCH(
     "/stores/{store_id}/toppings/{topping_id}",

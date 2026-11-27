@@ -1,5 +1,5 @@
-import { createApiClient } from "@/shared/api";
-import { getStatusMessage, HTTP_STATUS } from "@/shared/config";
+import { createApiClient, demoStores } from "@/shared/api";
+import { getStatusMessage, HTTP_STATUS, isDemoMode } from "@/shared/config";
 
 type StoreInvitationAcceptResult =
   | { ok: true; storeId: string }
@@ -8,6 +8,15 @@ type StoreInvitationAcceptResult =
 export async function storeInvitationAccept(
   invitationId: string,
 ): Promise<StoreInvitationAcceptResult> {
+  if (isDemoMode()) {
+    const store = demoStores[0];
+    if (store === undefined) {
+      throw new Error("デモ用の店舗が見つかりません");
+    }
+
+    return { ok: true, storeId: store.id };
+  }
+
   const client = await createApiClient();
   const { data, error, response } = await client.POST(
     "/store-invitations/{invitation_id}/accept",

@@ -1,5 +1,9 @@
-import { createApiClient, uploadImage } from "@/shared/api";
-import { getStatusMessage } from "@/shared/config";
+import {
+  createApiClient,
+  demoStoreApplications,
+  uploadImage,
+} from "@/shared/api";
+import { getStatusMessage, isDemoMode } from "@/shared/config";
 import { CreateStoreInput } from "../model/types";
 
 type CreateStoreApplicationParams = {
@@ -12,6 +16,21 @@ type CreateStoreApplicationParams = {
 export async function createStoreApplication({
   createStoreInput,
 }: CreateStoreApplicationParams) {
+  if (isDemoMode()) {
+    const application = demoStoreApplications[0];
+    if (application === undefined) {
+      throw new Error("デモ用の店舗申請が見つかりません");
+    }
+
+    return {
+      data: {
+        id: application.id,
+        reviewStatus: application.reviewStatus,
+        submittedAt: application.submittedAt,
+      },
+    };
+  }
+
   const { image, ...storeApplication } = createStoreInput;
   const uploadResult = await uploadImage(image);
 

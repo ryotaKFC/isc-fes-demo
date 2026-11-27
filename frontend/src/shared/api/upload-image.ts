@@ -1,4 +1,4 @@
-import { getStatusMessage } from "@/shared/config";
+import { getStatusMessage, isDemoMode } from "@/shared/config";
 import { buildFormDataBody } from "@/shared/lib/build-form-data-body";
 import type { components } from "./schema";
 import { createApiClient } from "./openapi-fetch/client";
@@ -10,6 +10,10 @@ export type UploadImageResult =
   | { data?: never; error: string };
 
 export async function uploadImage(image: File): Promise<UploadImageResult> {
+  if (isDemoMode()) {
+    return { data: { imageObjectKey: "demo/uploaded-image" } };
+  }
+
   const client = await createApiClient();
   const { data, error, response } = await client.POST("/images", {
     body: { image } as never,

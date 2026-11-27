@@ -1,5 +1,5 @@
 import { components, createApiClient } from "@/shared/api";
-import { checkoutableKey, getStatusMessage } from "@/shared/config";
+import { checkoutableKey, getStatusMessage, isDemoMode } from "@/shared/config";
 import { queryOptions } from "@tanstack/react-query";
 
 export type CheckoutCode = NonNullable<
@@ -10,6 +10,12 @@ export async function fetchCheckoutable(
   storeId: string,
   expectedCartVersion: number,
 ) {
+  if (isDemoMode()) {
+    return {
+      code: null,
+    } satisfies components["schemas"]["CheckoutCheckResponse"];
+  }
+
   const client = await createApiClient();
   const { data, error, response } = await client.GET(
     "/stores/{store_id}/carts/checkoutable",

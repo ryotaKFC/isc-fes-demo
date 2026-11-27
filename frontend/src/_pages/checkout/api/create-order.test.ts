@@ -8,6 +8,7 @@ const post = vi.fn();
 const input = { storeId: "store-123", expectedCartVersion: 1 };
 
 beforeEach(() => {
+  vi.stubEnv("NEXT_PUBLIC_APP_MODE", "api-test");
   vi.clearAllMocks();
   vi.mocked(createApiClient).mockResolvedValue({
     POST: post,

@@ -1,6 +1,6 @@
-import { createApiClient } from "@/shared/api";
+import { createApiClient, getDemoOrders } from "@/shared/api";
 import { Order, OrderStatus } from "../model/types";
-import { getStatusMessage, storeOrdersKey } from "@/shared/config";
+import { getStatusMessage, isDemoMode, storeOrdersKey } from "@/shared/config";
 import { v } from "@/shared/lib/valibot";
 import { queryOptions } from "@tanstack/react-query";
 
@@ -13,6 +13,10 @@ export async function fetchStoreOrders({
   storeId,
   statuses,
 }: FetchStoreOrdersParams): Promise<Order[]> {
+  if (isDemoMode()) {
+    return v.parse(v.array(Order), getDemoOrders({ storeId, statuses }));
+  }
+
   const client = await createApiClient();
   const { data, error, response } = await client.GET(
     "/stores/{store_id}/orders",

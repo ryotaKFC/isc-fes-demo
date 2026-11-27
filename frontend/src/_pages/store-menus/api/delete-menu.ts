@@ -1,5 +1,5 @@
 import { createApiClient } from "@/shared/api";
-import { getStatusMessage } from "@/shared/config";
+import { getStatusMessage, isDemoMode } from "@/shared/config";
 
 type DeleteMenuParams = {
   storeId: string;
@@ -7,6 +7,10 @@ type DeleteMenuParams = {
 };
 
 export async function deleteMenu({ menuId, storeId }: DeleteMenuParams) {
+  if (isDemoMode()) {
+    return;
+  }
+
   const client = await createApiClient();
   const { error, response } = await client.DELETE(
     "/stores/{store_id}/menus/{menu_id}",
