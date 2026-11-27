@@ -1,6 +1,10 @@
 import { StoreMemberRole } from "@/entities/store-member";
 import { createApiClient } from "@/shared/api";
-import { getStatusMessage, storeInvitationsUrl } from "@/shared/config";
+import {
+  getStatusMessage,
+  isDemoMode,
+  storeInvitationsUrl,
+} from "@/shared/config";
 
 type CreateStoreInvitationParams = {
   origin: string;
@@ -23,6 +27,14 @@ export async function createStoreInvitationUrl({
   maxUses,
   role,
 }: CreateStoreInvitationParams): Promise<string> {
+  if (isDemoMode()) {
+    const invitationUrl = new URL(
+      storeInvitationsUrl("00000000-0000-4000-8000-000000000904"),
+      origin,
+    );
+    return invitationUrl.toString();
+  }
+
   const client = await createApiClient();
   const { data, error, response } = await client.POST(
     "/stores/{store_id}/invitations",

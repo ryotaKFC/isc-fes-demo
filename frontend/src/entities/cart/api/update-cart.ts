@@ -1,5 +1,9 @@
-import { components, createApiClient } from "@/shared/api";
-import { getStatusMessage, HTTP_STATUS } from "@/shared/config";
+import {
+  buildDemoUpdatedCart,
+  components,
+  createApiClient,
+} from "@/shared/api";
+import { getStatusMessage, HTTP_STATUS, isDemoMode } from "@/shared/config";
 import { v } from "@/shared/lib/valibot";
 import { Cart } from "../model/types";
 
@@ -14,6 +18,10 @@ export async function updateCart({
   updateCartInput,
   storeId,
 }: UpdateCartParams) {
+  if (isDemoMode()) {
+    return v.parse(Cart, buildDemoUpdatedCart(storeId, updateCartInput));
+  }
+
   const client = await createApiClient();
   const { data, error, response } = await client.PUT(
     "/stores/{store_id}/carts",

@@ -1,6 +1,10 @@
 import { Topping } from "@/entities/topping";
-import { createApiClient } from "@/shared/api";
-import { getStatusMessage, storeToppingsKey } from "@/shared/config";
+import { createApiClient, getDemoToppings } from "@/shared/api";
+import {
+  getStatusMessage,
+  isDemoMode,
+  storeToppingsKey,
+} from "@/shared/config";
 import { v } from "@/shared/lib/valibot";
 import { queryOptions } from "@tanstack/react-query";
 
@@ -11,6 +15,10 @@ type FetchStoreToppingsParams = {
 export async function fetchStoreToppings({
   storeId,
 }: FetchStoreToppingsParams) {
+  if (isDemoMode()) {
+    return v.parse(v.array(Topping), getDemoToppings(storeId));
+  }
+
   const apiClient = await createApiClient();
   const { data, error, response } = await apiClient.GET(
     "/stores/{store_id}/toppings",

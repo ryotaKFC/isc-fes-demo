@@ -1,5 +1,5 @@
-import { createApiClient } from "@/shared/api";
-import { getStatusMessage, storeListKeys } from "@/shared/config";
+import { createApiClient, demoStoreRanking } from "@/shared/api";
+import { getStatusMessage, isDemoMode, storeListKeys } from "@/shared/config";
 import { v } from "@/shared/lib/valibot";
 import { queryOptions } from "@tanstack/react-query";
 import { Store } from "../model/types";
@@ -12,10 +12,16 @@ const StoreRankingItem = v.object({
 export type StoreRankingItem = v.InferOutput<typeof StoreRankingItem>;
 
 export async function fetchStoreRanking(): Promise<StoreRankingItem[]> {
+  if (isDemoMode()) {
+    return v.parse(v.array(StoreRankingItem), demoStoreRanking);
+  }
+
   const client = await createApiClient();
   const { data, error, response } = await client.GET("/stores/ranking");
 
-  if (error) throw new Error(getStatusMessage(response.status));
+  if (error) {
+    throw new Error(getStatusMessage(response.status));
+  }
 
   return v.parse(v.array(StoreRankingItem), data.data);
 }

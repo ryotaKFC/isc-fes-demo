@@ -1,6 +1,11 @@
 import { StoreMember } from "@/entities/store-member";
-import { createApiClient } from "@/shared/api";
-import { getStatusMessage, HTTP_STATUS, storeMemberKey } from "@/shared/config";
+import { createApiClient, findDemoStoreMember } from "@/shared/api";
+import {
+  getStatusMessage,
+  HTTP_STATUS,
+  isDemoMode,
+  storeMemberKey,
+} from "@/shared/config";
 import { v } from "@/shared/lib/valibot";
 import { queryOptions } from "@tanstack/react-query";
 
@@ -13,6 +18,11 @@ export async function fetchStoreMemberByAccountId({
   storeId,
   accountId,
 }: FetchStoreMemberByAccountIdParams): Promise<StoreMember | null> {
+  if (isDemoMode()) {
+    const member = findDemoStoreMember(storeId, accountId);
+    return member === undefined ? null : v.parse(StoreMember, member);
+  }
+
   const client = await createApiClient();
   const { data, error, response } = await client.GET(
     "/stores/{store_id}/members/{account_id}",

@@ -1,5 +1,5 @@
-import { createApiClient } from "@/shared/api";
-import { cartKey, getStatusMessage } from "@/shared/config";
+import { createApiClient, getDemoCart } from "@/shared/api";
+import { cartKey, getStatusMessage, isDemoMode } from "@/shared/config";
 import { v } from "@/shared/lib/valibot";
 import { queryOptions } from "@tanstack/react-query";
 import { Cart } from "../model/types";
@@ -9,6 +9,10 @@ type FetchCartParams = {
 };
 
 export async function fetchCart({ storeId }: FetchCartParams): Promise<Cart> {
+  if (isDemoMode()) {
+    return v.parse(Cart, getDemoCart(storeId));
+  }
+
   const client = await createApiClient();
   const { data, error, response } = await client.GET(
     "/stores/{store_id}/carts",

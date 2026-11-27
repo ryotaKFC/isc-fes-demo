@@ -1,18 +1,34 @@
 import { Store } from "../model/types";
-import { createApiClient } from "@/shared/api";
-import { getStatusMessage, HTTP_STATUS, storeDetailKey } from "@/shared/config";
+import { createApiClient, findDemoStore } from "@/shared/api";
+import {
+  getStatusMessage,
+  HTTP_STATUS,
+  isDemoMode,
+  storeDetailKey,
+} from "@/shared/config";
 import { v } from "@/shared/lib/valibot";
 import { queryOptions } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
 
 export async function fetchStoreDetail(storeId: string): Promise<Store> {
+  if (isDemoMode()) {
+    const store = findDemoStore(storeId);
+    if (store === undefined) {
+      notFound();
+    }
+
+    return v.parse(Store, store);
+  }
+
   const client = await createApiClient();
   const { data, error, response } = await client.GET("/stores/{store_id}", {
     params: { path: { store_id: storeId } },
   });
 
   if (error) {
-    if (response.status === HTTP_STATUS.NOT_FOUND.code) notFound();
+    if (response.status === HTTP_STATUS.NOT_FOUND.code) {
+      notFound();
+    }
     throw new Error(getStatusMessage(response.status));
   }
 

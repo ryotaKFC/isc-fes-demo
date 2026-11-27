@@ -1,4 +1,8 @@
-import { createApiClient, uploadImage } from "@/shared/api";
+import {
+  buildDemoEditedMenu,
+  createApiClient,
+  uploadImage,
+} from "@/shared/api";
 import { v } from "@/shared/lib/valibot";
 import {
   Menu,
@@ -7,7 +11,7 @@ import {
   MenuSoldOut,
   MenuUnitPrice,
 } from "@/entities/menu";
-import { getStatusMessage } from "@/shared/config";
+import { getStatusMessage, isDemoMode } from "@/shared/config";
 import { UploadImage } from "@/shared/model";
 import { ToppingId } from "@/entities/topping";
 
@@ -35,6 +39,10 @@ export async function editMenu({
   storeId,
   editMenuInput,
 }: EditMenuParms) {
+  if (isDemoMode()) {
+    return v.parse(Menu, buildDemoEditedMenu(storeId, menuId, editMenuInput));
+  }
+
   const { image, ...menuInput } = editMenuInput;
   const uploadResult = image && (await uploadImage(image));
   if (uploadResult && uploadResult.data === undefined) {

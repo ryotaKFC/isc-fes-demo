@@ -1,8 +1,9 @@
 import { Order } from "@/entities/order";
-import { createApiClient } from "@/shared/api";
+import { createApiClient, findDemoOrder } from "@/shared/api";
 import {
   getStatusMessage,
   HTTP_STATUS,
+  isDemoMode,
   orderDetailKeys,
 } from "@/shared/config";
 import { v } from "@/shared/lib/valibot";
@@ -13,6 +14,11 @@ type FetchOrderByIdParams = {
 };
 
 export async function fetchOrderById({ orderId }: FetchOrderByIdParams) {
+  if (isDemoMode()) {
+    const order = findDemoOrder(orderId);
+    return order === undefined ? null : v.parse(Order, order);
+  }
+
   const client = await createApiClient();
   const { data, error, response } = await client.GET("/orders/{order_id}", {
     params: {

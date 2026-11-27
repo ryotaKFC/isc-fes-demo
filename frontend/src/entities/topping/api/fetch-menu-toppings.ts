@@ -1,8 +1,12 @@
-import { createApiClient } from "@/shared/api";
+import { createApiClient, getDemoMenuToppings } from "@/shared/api";
 import { Topping } from "../model/types";
 import { v } from "@/shared/lib/valibot";
 import { queryOptions } from "@tanstack/react-query";
-import { getStatusMessage, menuToppingsKeys } from "@/shared/config";
+import {
+  getStatusMessage,
+  isDemoMode,
+  menuToppingsKeys,
+} from "@/shared/config";
 
 type FetchMenuToppingsParams = {
   storeId: string;
@@ -13,6 +17,10 @@ export async function fetchMenuToppings({
   storeId,
   menuId,
 }: FetchMenuToppingsParams): Promise<Topping[]> {
+  if (isDemoMode()) {
+    return v.parse(v.array(Topping), getDemoMenuToppings(storeId, menuId));
+  }
+
   const client = await createApiClient();
   const { data, error, response } = await client.GET(
     "/stores/{store_id}/menus/{menu_id}/toppings",

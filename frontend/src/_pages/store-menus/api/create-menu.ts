@@ -5,8 +5,12 @@ import {
   MenuUnitPrice,
 } from "@/entities/menu";
 import { ToppingId } from "@/entities/topping";
-import { createApiClient, uploadImage } from "@/shared/api";
-import { getStatusMessage } from "@/shared/config";
+import {
+  buildDemoCreatedMenu,
+  createApiClient,
+  uploadImage,
+} from "@/shared/api";
+import { getStatusMessage, isDemoMode } from "@/shared/config";
 import { v } from "@/shared/lib/valibot";
 import { UploadImage } from "@/shared/model";
 
@@ -30,6 +34,10 @@ export async function createMenu({
   createMenuInput,
   storeId,
 }: CreateMenuParams) {
+  if (isDemoMode()) {
+    return v.parse(Menu, buildDemoCreatedMenu(storeId, createMenuInput));
+  }
+
   const { image, ...menuInput } = createMenuInput;
   const uploadResult = await uploadImage(image);
   if (uploadResult.data === undefined) {

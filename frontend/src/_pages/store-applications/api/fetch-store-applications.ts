@@ -1,5 +1,9 @@
-import { createApiClient } from "@/shared/api";
-import { getStatusMessage, storeApplicationsKey } from "@/shared/config";
+import { createApiClient, demoStoreApplications } from "@/shared/api";
+import {
+  getStatusMessage,
+  isDemoMode,
+  storeApplicationsKey,
+} from "@/shared/config";
 import { v } from "@/shared/lib/valibot";
 import { queryOptions } from "@tanstack/react-query";
 import { StoreApplication } from "../model/types";
@@ -12,6 +16,10 @@ export function storeApplicationQueryOptions() {
 }
 
 async function fetchStoreApplications() {
+  if (isDemoMode()) {
+    return v.parse(v.array(StoreApplication), demoStoreApplications);
+  }
+
   const client = await createApiClient();
   const { data, error, response } = await client.GET("/store-applications");
 
